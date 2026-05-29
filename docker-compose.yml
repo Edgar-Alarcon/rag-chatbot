@@ -20,7 +20,7 @@ services:
       - qdrant
 
   qdrant:
-    image: qdrant/qdrant:v1.13.2
+    image: qdrant/qdrant:latest
     volumes:
       - qdrant_storage:/qdrant/storage
     mem_limit: 512m

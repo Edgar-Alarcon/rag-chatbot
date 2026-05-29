@@ -6,17 +6,14 @@ const ai = new GoogleGenAI({ apiKey: config.googleApiKey });
 export async function embedTexts(texts: string[]): Promise<number[][]> {
   const results: number[][] = [];
 
-  for (let i = 0; i < texts.length; i += 100) {
-    const batch = texts.slice(i, i + 100);
+  for (const text of texts) {
     const response = await ai.models.embedContent({
       model: config.embeddingModel,
-      contents: batch.map(text => ({ parts: [{ text }] })),
+      contents: text,
     });
 
-    if (response.embeddings) {
-      for (const emb of response.embeddings) {
-        results.push(emb.values!);
-      }
+    if (response.embeddings && response.embeddings.length > 0) {
+      results.push(response.embeddings[0].values!);
     }
   }
 

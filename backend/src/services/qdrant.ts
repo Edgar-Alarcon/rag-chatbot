@@ -2,21 +2,33 @@ import { QdrantClient } from '@qdrant/js-client-rest';
 import { config } from '../config.js';
 import { v4 as uuid } from 'uuid';
 
-const client = new QdrantClient({ url: config.qdrantUrl });
+const client = new QdrantClient({ url: config.qdrantUrl, checkCompatibility: false });
 const COLLECTION = config.qdrantCollection;
 
 export async function ensureCollection() {
   const collections = await client.getCollections();
   const exists = collections.collections.some(c => c.name === COLLECTION);
-  if (!exists) {
-    await client.createCollection(COLLECTION, {
-      vectors: { size: config.embeddingDimensions, distance: 'Cosine' },
-    });
-    await client.createPayloadIndex(COLLECTION, {
-      field_name: 'project_id',
-      field_schema: 'keyword',
-    });
+
+  if (exists) {
+    const info = await client.getCollection(COLLECTION);
+    const currentSize = typeof info.config.params.vectors === 'object' && 'size' in info.config.params.vectors
+      ? info.config.params.vectors.size
+      : 0;
+    if (currentSize !== config.embeddingDimensions) {
+      await client.deleteCollection(COLLECTION);
+      console.log(`Recreating collection (${currentSize} → ${config.embeddingDimensions} dims)`);
+    } else {
+      return;
+    }
   }
+
+  await client.createCollection(COLLECTION, {
+    vectors: { size: config.embeddingDimensions, distance: 'Cosine' },
+  });
+  await client.createPayloadIndex(COLLECTION, {
+    field_name: 'project_id',
+    field_schema: 'keyword',
+  });
 }
 
 export async function upsertChunks(

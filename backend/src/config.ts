@@ -8,8 +8,8 @@ export const config = {
   qdrantCollection: 'documents',
   chunkSize: 600,
   chunkOverlap: 100,
-  embeddingModel: 'text-embedding-004',
-  embeddingDimensions: 768,
+  embeddingModel: 'gemini-embedding-001',
+  embeddingDimensions: 3072,
   llmModel: 'gemini-2.5-flash',
   topK: 3,
 };
