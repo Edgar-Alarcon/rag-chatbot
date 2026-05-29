@@ -1,0 +1,31 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80"
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - QDRANT_URL=http://qdrant:6333
+      - CORS_ORIGIN=https://rag.service.edvantage.dev
+      - NODE_ENV=production
+    volumes:
+      - uploads:/app/uploads
+      - dbdata:/app/data
+    depends_on:
+      - qdrant
+
+  qdrant:
+    image: qdrant/qdrant:v1.13.2
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    mem_limit: 512m
+
+volumes:
+  uploads:
+  dbdata:
+  qdrant_storage:

@@ -1,0 +1,15 @@
+export const config = {
+  port: parseInt(process.env.PORT || '3000'),
+  googleApiKey: process.env.GOOGLE_API_KEY || '',
+  qdrantUrl: process.env.QDRANT_URL || 'http://localhost:6333',
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  uploadDir: process.env.UPLOAD_DIR || './uploads',
+  dbPath: process.env.DB_PATH || './data/rag.db',
+  qdrantCollection: 'documents',
+  chunkSize: 600,
+  chunkOverlap: 100,
+  embeddingModel: 'text-embedding-004',
+  embeddingDimensions: 768,
+  llmModel: 'gemini-2.5-flash',
+  topK: 3,
+};
